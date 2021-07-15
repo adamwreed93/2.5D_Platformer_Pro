@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
     private float _yVelocity;
     private float _horizontalInput;
     private float _verticalInput;
+    private float _rollSpeed;
+    private float _currentMovementSpeed;
 
     
 
@@ -34,7 +36,9 @@ public class Player : MonoBehaviour
     void Start()
     {
         _animator = GetComponentInChildren<Animator>();
-        _characterController = GetComponent<CharacterController>();  
+        _characterController = GetComponent<CharacterController>();
+
+        _currentMovementSpeed = _movementSpeed;
     }
 
     void Update()
@@ -82,18 +86,18 @@ public class Player : MonoBehaviour
             {
                 _characterController.enabled = true;
                 _isClimbingDownLadder = false;
-                _animator.SetBool("ClimbingLadder", false);
+                _animator.SetBool("ClimbingDownLadder", false);
             }
         }
     }
 
     void CalculateMovement()
     {
-        _direction = new Vector3(0, 0, _horizontalInput);
-        _velocity = _direction * _movementSpeed;
-
         if (_characterController.isGrounded == true && _characterController.enabled == true)
         {
+            _direction = new Vector3(0, 0, _horizontalInput);
+            _velocity = _direction * _currentMovementSpeed;
+
             _animator.SetBool("isJumping", false);
             _animator.SetFloat("Speed", Mathf.Abs(_horizontalInput));
 
@@ -143,7 +147,7 @@ public class Player : MonoBehaviour
                     _playerModel.transform.eulerAngles = new Vector3(0, 0, 0);
                     _characterController.enabled = false;
                     _isClimbingDownLadder = true;
-                    _animator.SetBool("ClimbingLadder", true);
+                    _animator.SetBool("ClimbingDownLadder", true);
                 }
             }
         }
@@ -189,7 +193,6 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            _animator.SetBool("isRolling", true);
             StartCoroutine(CalculateRoll());
         }
     }
@@ -197,6 +200,10 @@ public class Player : MonoBehaviour
     //Roll Mechanic
     private IEnumerator CalculateRoll()
     {
-        yield return new WaitForSeconds(1);
+        _animator.SetBool("isRolling", true);
+        _currentMovementSpeed *= 2;
+        yield return new WaitForSeconds(2);
+        _currentMovementSpeed = _movementSpeed;
+        _animator.SetBool("isRolling", false);
     }
 }
