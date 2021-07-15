@@ -67,6 +67,7 @@ public class UIManager : MonoBehaviour
 
         if (_silverCoinCount == 23 && _purpleCoinCount == 4)
         {
+            _winGameText.SetActive(true);
             _masterWinGameText.SetActive(true);
             StartCoroutine(TextFlash());
         }
